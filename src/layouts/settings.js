@@ -700,9 +700,9 @@ export class Settings extends Component {
                 <option value="" disabled selected>
                   Confidence Level
                 </option>
-                <option value="0.5">High</option>
-                <option value="0.1">Standard</option>
-                <option value="0.05">Low</option>
+                <option value="0.8">High</option>
+                <option value="0.6">Standard</option>
+                <option value="0.4">Low</option>
                 <option value="0">None</option>
               </select>
               </Grid.Column>
@@ -719,7 +719,6 @@ export class Settings extends Component {
                   delete newUserData["scan_directory"];
                   delete newUserData["avatar"];
                   this.props.dispatch(manageUpdateUser(newUserData));
-                  this.props.onRequestClose();
                 }}
               >
                 Update

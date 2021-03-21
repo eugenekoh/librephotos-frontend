@@ -429,3 +429,47 @@ export function generatePhotoIm2txtCaption(image_hash) {
     
   }
 }
+
+export function generatePhotoPicCaption(image_hash, personality, callback) {
+    console.log(image_hash, personality)
+    return function(dispatch) {
+        dispatch({ type: "GENERATE_PHOTO_CAPTION"});
+        Server.post('generatepic',{image_hash:image_hash, personality:personality}, { timeout: 100000 })
+            .then(response => {
+                dispatch({ type: "GENERATE_PHOTO_CAPTION_FULFILLED"});
+                dispatch(fetchPhotoDetail(image_hash))
+                callback(image_hash, response.data)
+            })
+            .catch(error => {
+                dispatch({ type: "GENERATE_PHOTO_CAPTION_REJECTED"});
+                console.log(error)
+            })
+
+    }
+}
+
+export function generateBoundingBoxImage(image_hash, callback) {
+    return function(dispatch) {
+        Server.post('generatebbimage',{image_hash:image_hash}, { timeout: 100000 })
+            .then(response => {
+                dispatch(fetchPhotoDetail(image_hash))
+                callback()
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+    }
+}
+
+export function reset() {
+    return function(dispatch) {
+        Server.get("reset", { timeout: 100000 })
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    };
+}

@@ -28,6 +28,7 @@ import {
 } from '../actions/utilActions';
 import SortableTree from 'react-sortable-tree';
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
+import {generateBoundingBoxImage, reset} from "../actions/photosActions";
 
 
 export class AdminPage extends Component {
@@ -157,12 +158,21 @@ export class AdminPage extends Component {
           userToEdit={this.state.userToEdit}
           isOpen={this.state.modalOpen}
         />
-      </div>
-    );
-  }
-}
 
-const modalStyles = {
+        <Divider />
+        <Header as="h3">Site settings</Header>
+          <Button
+              color={"red"}
+              onClick={() => {
+                  this.props.dispatch(reset())
+              }}
+          >Reset</Button>
+      </div>
+  );
+  }
+  }
+
+  const modalStyles = {
   content: {
     top: 150,
     left: 40,
