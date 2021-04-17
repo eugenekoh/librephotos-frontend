@@ -1631,6 +1631,20 @@ class PersonalityForm extends Component{
             >
               Generate
             </Button>
+            <Button
+                icon
+                floated ="right"
+                size="small"
+                color="blue"
+            >
+              <Icon
+                  name='share alternate'
+                  onClick={()=>{
+                    const url = 'https://www.instagram.com';
+                    window.open(url, '_blank');
+                  }}
+              />
+            </Button>
           </Form>
 
         </div>

@@ -30,6 +30,7 @@ import { fetchPeople } from "../actions/peopleActions";
 import {
   searchPeople,
   searchPhotos,
+  searchPhotosV2,
   searchPlaceAlbums,
   searchThingAlbums,
 } from "../actions/searchActions";
@@ -130,6 +131,8 @@ export class TopMenuPublic extends Component {
 export class TopMenu extends Component {
   state = {
     searchText: "",
+    searchPerson: "",
+    searchEmotion: "",
     warningPopupOpen: false,
     showEmptyQueryWarning: false,
     width: window.innerWidth,
@@ -288,11 +291,14 @@ export class TopMenu extends Component {
   }
 
   handleSearch(e, d) {
-    if (this.state.searchText.length > 0) {
-      this.props.dispatch(searchPhotos(this.state.searchText));
-      this.props.dispatch(searchPeople(this.state.searchText));
-      this.props.dispatch(searchThingAlbums(this.state.searchText));
-      this.props.dispatch(searchPlaceAlbums(this.state.searchText));
+    console.log('handleSearch Search')
+    if (this.state.searchText.length > 0 || this.state.searchEmotion.length > 0 || this.state.searchPerson.length > 0) {
+      console.log('dispatched')
+      this.props.dispatch(searchPhotosV2(this.state.searchPerson, this.state.searchEmotion, this.state.searchText));
+      // this.props.dispatch(searchPhotos(this.state.searchText));
+      // this.props.dispatch(searchPeople(this.state.searchText));
+      // this.props.dispatch(searchThingAlbums(this.state.searchText));
+      // this.props.dispatch(searchPlaceAlbums(this.state.searchText));
       this.props.dispatch(push("/search"));
     } else {
       this.setState({ warningPopupOpen: true, showEmptyQueryWarning: true });
@@ -307,9 +313,21 @@ export class TopMenu extends Component {
     this.filterSearchSuggestions();
   }
 
+  handleClear(e, d) {
+    this.setState({
+      [d.name]:''
+    })
+  }
+
+  handleDropDownChange(e, d) {
+    this.setState({
+      [d.name]: d.value
+    })
+  }
+
   render() {
-    if(this.state.avatarImgSrc == "/unknown_user.jpg"){
-      console.log(this.state.avatarImgSrc);
+  if(this.state.avatarImgSrc == "/unknown_user.jpg"){
+    console.log(this.state.avatarImgSrc);
       if (this.props.userSelfDetails && this.props.userSelfDetails.avatar_url) {
         console.log(serverAddress + this.props.userSelfDetails.avatar_url);
         this.setState({
@@ -376,39 +394,42 @@ export class TopMenu extends Component {
               </Button>
             </Menu.Item>
           </Menu.Menu>
-
           <Menu.Menu position="right">
             <Menu.Item>
               <Input
-                size="large"
-                onFocus={() => {
-                  this.setState({ searchBarFocused: true });
-                }}
-                onBlur={() => {
-                  _.debounce(() => {
-                    this.setState({ searchBarFocused: false });
-                  }, 200)();
-                }}
-                onKeyDown={(event) => {
-                  switch (event.keyCode) {
-                    case ENTER_KEY:
-                      this.props.dispatch(searchPhotos(this.state.searchText));
-                      this.props.dispatch(push("/search"));
-                      this.setState({searchBarFocused: false});
-                      break;
-                    default:
-                      break;
-                  }
-                }}
                 onChange={this.handleChange}
-                action={{
-                  icon: "search",
-                  color: "blue",
-                  loading: this.props.searchingPhotos,
-                  onClick: this.handleSearch,
-                }}
-                placeholder={this.state.exampleSearchTerm}
-              />
+                placeholder={"Search"}
+              >
+                <Dropdown
+                    placeholder={"People"}
+                    name={"searchPerson"}
+                    search
+                    selection
+                    multiple
+                    value={this.state.searchPerson}
+                    onChange={this.handleDropDownChange.bind(this)}
+                    options={
+                      empty.concat(this.props.people.filter((person) => person.text !== 'unknown'))
+                    }
+                />
+                <Dropdown
+                    placeholder={"Emotion"}
+                    name={"searchEmotion"}
+                    search
+                    selection
+                    compact
+                    value={this.state.searchEmotion}
+                    onChange={this.handleDropDownChange.bind(this)}
+                    options={emotion}
+                />
+                <input />
+              </Input>
+              <Button
+                  size="tiny"
+                  loading={this.props.searchingPhotos}
+                  onClick={this.handleSearch.bind(this)}>
+                Search
+              </Button>
             </Menu.Item>
             <Menu.Item>
               <Popup
@@ -773,7 +794,7 @@ export class SideMenuNarrow extends Component {
           <Menu.Item name="logo">
             <img height={40} src="/logo.png" />
             <p>
-              <small>LibrePhotos</small>
+              <small>LibrePhotos+</small>
             </p>
           </Menu.Item>
         )}
@@ -1196,3 +1217,54 @@ SideMenuNarrow = connect((store) => {
     location: store.routerReducer.location,
   };
 })(SideMenuNarrow);
+
+const emotion = [
+  {
+    value : '',
+    key : '',
+    text : 'None'
+  },
+  {
+    key: 'Angry',
+    value: 'Angry',
+    text: 'Angry'
+  },
+  {
+    key: 'Disgust',
+    value: 'Disgust',
+    text: 'Disgust'
+  },
+  {
+    key: 'Fear',
+    value: 'Fear',
+    text: 'Fear'
+  },
+  {
+    key: 'Happy',
+    value: 'Happy',
+    text: 'Happy'
+  },
+  {
+    key: 'Neutral',
+    value: 'Neutral',
+    text: 'Neutral'
+  },
+  {
+    key: 'Sad',
+    value: 'Sad',
+    text: 'Sad'
+  },
+  {
+    key: 'Surprise',
+    value: 'Surprise',
+    text: 'Surprise'
+  },
+]
+
+const empty = [
+  {
+    value : '',
+    key : '',
+    text : ''
+  }
+]

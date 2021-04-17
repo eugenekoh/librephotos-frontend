@@ -52,11 +52,16 @@ const SCROLL_DEBOUNCE_DURATION = 100; // In milliseconds
 
 
 export class SearchView extends Component {
+
+    process(x){
+        x = x.split(',')
+        return x.join(' ').trim()
+    }
     render() {
         const {searchingPhotos,searchedPhotos,searchQuery} = this.props
         return (
             <PhotoListView 
-                title={searchingPhotos ? `Searching "${searchQuery}"...` : searchQuery===null ? "Search for things, places, people, and time." : `"${searchQuery}"`}
+                title={searchingPhotos ? `Searching "${this.process(searchQuery)}"...` : searchQuery===null ? "Search for things, places, people, and time." : `"${this.process(searchQuery)}"`}
                 loading={searchingPhotos}
                 titleIconName={'search'}
                 subtitle={"hehehe"}
@@ -66,13 +71,6 @@ export class SearchView extends Component {
         )
     }
 }
-
-
-
-
-
-
-
 
 
 class DayGroupPlaceholder extends Component {
